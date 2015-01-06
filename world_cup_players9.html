@@ -6,7 +6,7 @@ body{
 
     width: 1200px;
     margin: 100px auto;
-    background-color: green;
+    background-color: #9FD6E8;
 
 }
 svg text{
@@ -15,10 +15,16 @@ svg text{
 
 
 svg {
-    background-color: #A8A8A8;
+/*    background-size: 1800px 940px;
+    background-image: url(fifaachtergrond.jpg);
+    background-repeat: no-repeat;*/
+    background-color: #E7F4FA;
     position: absolute;
     top: 50px;
     left: 50px;
+    border: 1px solid;
+    border-radius: 25px;
+    border-color: green;
 }
 
 rect{
@@ -40,16 +46,19 @@ rect{
 
 .form_right {
   position: absolute;
-  right: 10px;
+  left: 1200px;
   top: 10px;
+  width: 700px;
+  height: 10px;
 }
 
 .form_left {
   position: absolute;
   left: 10px;
   top: 10px;
+  width: 700px;
+  height: 10px;
 }
-
 
 </style>
 <body>
@@ -954,9 +963,9 @@ all_colors = all_colors.sort(SortLowToHigh);
 
 
 // Set the margins of the svg
-var margin = {top: 15, right: 20, bottom: 30, left: 40},
-    width = 1800 - margin.left - margin.right,
-    height = 920 - margin.top - margin.bottom;
+var margin = {top: 10, right: 20, bottom: 5, left: 40},
+    width = 1740,
+    height = 880;
 
 // Make the svg
 var svg = d3.select("body").append("svg")
@@ -965,9 +974,38 @@ var svg = d3.select("body").append("svg")
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-// Translate the pixels to the values
+
+
+
+  
+
+// Define the maximum value of competition countries (England competition: 120 players)
+var max_value = 120
+// Define variable for the value of a world cup team selection
+var wc_team_amount = 23;
+// Define variabele for the maximum amount of playernames below each other
+var max_player_names = 44;
+// Define variable for the horizontal distance between player names
+var distance_x_player_names = 200;
+// Define variable for correction on text places
+var text_place_cor = 20;
+// Define variable that's useful to divided by to determine the height of a bar
+var divided_for_height_bar = 1.361
+// Define variable that's useful to diveded by to determine the y location of a bar
+var divided_for_loc_bar = 1.025
+// Define variables that's used to shift the leftbars and belongings
+var shift_left_bars = 550
+// Define a variable for the width of the second little bar
+var width_little_bar = 4
+// Define a variable for correction on line places
+var line_place_cor = 35
+// Defina a variable for correction of the vertical place of the abbreviation
+var ab_and_val_place_cor = 6
+
+
+// Translate the pixels to the values and call it withScale
 var widthScale = d3.scale.linear()
-.domain([0, 120])
+.domain([0, max_value])
 .range([0, 1 / 2 * width])
 
 // Define the values for the selected countries and set them to the ones that are checked from the beginning
@@ -1023,9 +1061,6 @@ function make_selection_of_club_countries(selection) {
 }
 
 
-
-// Uruguay,URU,South America,Martin SILVA,Goalkeeper,4,0,187,Algeria - Uruguay 12 Aug 2009,25 Mar 1983,CR Vasco da Gama ,Brazil,BRA,South America
-
 function which_players_in_country(country, wc_selection, club_selection) {
     var list_of_players_in = [];
     var list_of_players_for = [];
@@ -1053,7 +1088,7 @@ function calculate_values_of_countries(wc_selection, club_selecton) {
     var data_plot1 = [];
     var data_plot2 = [];
 
-    // Als 1 van de 2 een land is, dan loopt ie over de desbetreffende loop maar 1 keer, zoals het gewenst
+    // Als 1 van de 2 een land is, dan loopt ie over de desbetreffende loop maar 1 keer, zoals gewenst
     var world_cup_countries = make_selection_of_world_cup_countries(wc_selection);
     var club_countries = make_selection_of_club_countries(club_selecton);
 
@@ -1099,7 +1134,7 @@ function little_bar_or_not(d)
 {
     if (d > 0)
     {
-        return 4
+        return width_little_bar
     }
     else
     {
@@ -1117,9 +1152,9 @@ function show_list_right(input)
     .enter()
     .append("svg:text")
     .attr("class", "playerlist")
-    .attr("x", 1 /2 * width + 1 + widthScale(95))
-    .attr("y", 0)
-    .attr("dy", function(d,i) {return i * 20; })
+    .attr("x", width - distance_x_player_names)
+    .attr("y", margin.top)
+    .attr("dy", function(d,i) {return i * text_place_cor; })
     .attr("text-anchor", "right")
     .attr("fill", "black")
     .text(function(d) { return d; });
@@ -1134,15 +1169,17 @@ function show_list_left(input)
     .enter()
     .append("svg:text")
     .attr("class", "playerlist")
-    .attr("x", function(d,i) { return parseInt(i / 46) * 200;})
-    .attr("y", 0)
+    .attr("x", function(d,i) { return parseInt(i / max_player_names) * distance_x_player_names;})
+    .attr("y", margin.top)
     .attr("dy", function(d,i) {
-            return (i - 46 * parseInt(i / 46)) * 20; })
+            return (i - max_player_names * parseInt(i / max_player_names)) * text_place_cor; })
     .attr("text-anchor", "right")
     .attr("fill", "black")
     .text(function(d) { return d; });
 
 }
+
+
 
 function make_the_bars(world_cup_continent, club_continent)
 {
@@ -1157,30 +1194,55 @@ function make_the_bars(world_cup_continent, club_continent)
     make_the_left_bars(world_cup_continent, club_continent)
     make_the_right_bars(world_cup_continent, club_continent)
 
+    // Make a title above the world cup team bars
+    var title_1 = svg
+    .append("svg:text")
+    .attr("x", widthScale(wc_team_amount) / 2)
+    .attr("y", 10)
+    .attr("text-anchor", "middle")
+    .attr("fill", "black")
+    .style("font-size","18px")
+    .style("font-weight", "bold")
+    .text("World cup teams")
+    .attr("transform", "translate(" + shift_left_bars +"," + 0 + ")");
+
+    // Make a title above the National competition bars
+    var title_2 = svg
+    .append("svg:text")
+    .attr("x",  1/2 * width + widthScale(wc_team_amount) / 2)
+    .attr("y", 10)
+    .attr("text-anchor", "middle")
+    .attr("fill", "black")
+    .style("font-size","18px")
+    .style("font-weight", "bold")
+    .text("National competitions");
+
+
         var abbreviation_by_bars_left = svg.selectAll("abbreviation_by_bars2")
         .data(selection_wc_countries)
         .enter()
         .append("svg:text")
-        .attr("x", function(d, index) { return widthScale(23); })
-        .attr("y", function(d,i) {return i * 920 / selection_wc_countries.length / 1.025; })
-        .attr("dx", 20)
-        .attr("dy", 920 / selection_wc_countries.length / 1.361 / 2 + 6)
+        .attr("x", function(d, index) { return widthScale(wc_team_amount); })
+        .attr("y", function(d,i) {return i * height / selection_wc_countries.length / divided_for_loc_bar; })
+        .attr("dx", text_place_cor)
+        .attr("dy", height / selection_wc_countries.length / divided_for_height_bar / 2 + ab_and_val_place_cor)
         .attr("text-anchor", "middle")
         .text(function(d) { return calculate_abbreviation(d);})
         .attr("fill", "black")
-        .attr("transform", "translate(" + 550 +"," + 0 + ")")
+        .attr("transform", "translate(" + shift_left_bars +"," + 25 + ")")
 
-            var abbreviation_by_bars_right = svg.selectAll("abbreviation_by_bars")
+        var abbreviation_by_bars_right = svg.selectAll("abbreviation_by_bars")
         .data(selection_club_countries)
         .enter()
         .append("svg:text")
         .attr("x", function(d) { return 1 /2 * width + 1; })
-        .attr("y", function(d,i) {return i * 920 / selection_club_countries.length / 1.025; })
-        .attr("dx", -20)
-        .attr("dy", 920 / selection_club_countries.length / 1.361 / 2 + 6)
+        .attr("y", function(d,i) {return i * height / selection_club_countries.length / divided_for_loc_bar; })
+        .attr("dx", -text_place_cor)
+        .attr("dy", height / selection_club_countries.length / divided_for_height_bar / 2 + ab_and_val_place_cor)
         .attr("text-anchor", "middle")
         .text(function(d) { return calculate_abbreviation(d);})
         .attr("fill", "black")
+        .attr("transform", "translate(" + 0 +"," + 25 + ")")
 
     // Set all the clickvalues back to null and update the value that's clicked
     function change_zero_one(array, index)
@@ -1214,10 +1276,12 @@ function make_the_bars(world_cup_continent, club_continent)
             .attr("class", "bar_left")
             .attr("id", "mainbar_left")
             .attr("width", function(d) { return widthScale(d); })
-            .attr("height", 920 / selection_wc_countries.length / 1.361)
-            .attr("y", function(d,i) {return i * 920 / selection_wc_countries.length / 1.025; })
-            .attr("x", function(d) { return 0 + widthScale(23 - d); })
+            .attr("height", height / selection_wc_countries.length / divided_for_height_bar)
+            .attr("y", function(d,i) {return i * height / selection_wc_countries.length / divided_for_loc_bar; })
+            .attr("x", function(d) { return 0 + widthScale(wc_team_amount - d); })
             .attr("fill", function(d,i) {return calculate_colors(selection_wc_countries[i])[0]; })
+            .attr("stroke-width", 1)
+            .attr("stroke", "black")
             .on("click", function(d,i) { 
 
                 // Remove the playerlist
@@ -1254,7 +1318,7 @@ function make_the_bars(world_cup_continent, club_continent)
                   show_list_left(which_players_in_country(selection_wc_countries[i], wc_selection, club_selection)[1])
                 }
             })
-            .attr("transform", "translate(" + 550 +"," + 0 + ")")
+            .attr("transform", "translate(" + shift_left_bars +"," + 25 + ")")
 
 
         // Set the values along the bars
@@ -1263,14 +1327,14 @@ function make_the_bars(world_cup_continent, club_continent)
             .enter()
             .append("svg:text")
             .attr("class", "bar_left")
-            .attr("x", function(d) { return 0 + widthScale(23 - d); })
-            .attr("y", function(d,i) {return i * 920 / selection_wc_countries.length / 1.025; })
-            .attr("dx", -20/2)
-            .attr("dy", 920 / selection_wc_countries.length / 1.361 / 2 + 6)
+            .attr("x", function(d) { return 0 + widthScale(wc_team_amount - d); })
+            .attr("y", function(d,i) {return i * height / selection_wc_countries.length / divided_for_loc_bar; })
+            .attr("dx", -text_place_cor/2)
+            .attr("dy", height / selection_wc_countries.length / divided_for_height_bar / 2 + ab_and_val_place_cor)
             .attr("text-anchor", "middle")
             .text(function(d) { return d;})
             .attr("fill", "black")
-            .attr("transform", "translate(" + 550 +"," + 0 + ")")
+            .attr("transform", "translate(" + shift_left_bars +"," + 25 + ")")
 
             // Make the bars of the data_plot that's generated
             var bars2_left = svg.selectAll("rect4")
@@ -1279,11 +1343,13 @@ function make_the_bars(world_cup_continent, club_continent)
             .append("rect")
             .attr("class", "bar_left")
             .attr("width", function(d) { return little_bar_or_not(d); })
-            .attr("height", 920 / selection_wc_countries.length / 1.361)
-            .attr("y", function(d,i) {return i * 920 / selection_wc_countries.length / 1.025; })
-            .attr("x", widthScale(23) - 4)
+            .attr("height", height / selection_wc_countries.length / divided_for_height_bar)
+            .attr("y", function(d,i) {return i * height / selection_wc_countries.length / divided_for_loc_bar; })
+            .attr("x", widthScale(wc_team_amount))
             .attr("fill", function(d,i) {return  calculate_colors(selection_wc_countries[i])[1]; })
-            .attr("transform", "translate(" + 550 +"," + 0 + ")")
+            .attr("stroke-width", 1)
+            .attr("stroke", "black")
+            .attr("transform", "translate(" + shift_left_bars +"," + 25 + ")")
 
         function make_lines_from_left(wc_selection, club_selection, input)
         {
@@ -1296,12 +1362,13 @@ function make_the_bars(world_cup_continent, club_continent)
                 var line = svg
                     .append("line")
                     .attr("class", "lines")       
-                    .attr("x1", widthScale(23) + 550 +35)
-                    .attr("y1", input * 920 / selection_wc_countries.length / 1.025 + 1 / 2 * 920 / selection_wc_countries.length / 1.361)
-                    .attr("x2",  1 /2 * width + 1 - 35)
-                    .attr("y2", i * 920 / selection_club_countries.length / 1.025 + + 1 / 2 * 920 / selection_club_countries.length / 1.361)
+                    .attr("x1", widthScale(wc_team_amount) + shift_left_bars + line_place_cor)
+                    .attr("y1", input * height / selection_wc_countries.length / divided_for_loc_bar + 1 / 2 * height / selection_wc_countries.length / divided_for_height_bar)
+                    .attr("x2",  1 /2 * width - line_place_cor)
+                    .attr("y2", i * height / selection_club_countries.length / divided_for_loc_bar + + 1 / 2 * height / selection_club_countries.length / divided_for_height_bar)
                     .attr("stroke", "green")
                     .attr("stroke-width", 1)
+                    .attr("transform", "translate(" + 0 +"," + 25 + ")")
                 }
             }
         }
@@ -1329,10 +1396,12 @@ function make_the_bars(world_cup_continent, club_continent)
             .attr("class", "bar_right")
             .attr("id", "mainbar_right")
             .attr("width", function(d) { return widthScale(d); })
-            .attr("height", 920 / selection_club_countries.length / 1.361)
-            .attr("y", function(d,i) {return i * 920 / selection_club_countries.length / 1.025; })
-            .attr("x", 1 /2 * width + 1)
+            .attr("height", height / selection_club_countries.length / divided_for_height_bar)
+            .attr("y", function(d,i) {return i * height / selection_club_countries.length / divided_for_loc_bar; })
+            .attr("x", 1 /2 * width)
             .attr("fill", function(d,i) {return calculate_colors(selection_club_countries[i])[0]; })
+            .attr("stroke-width", 1)
+            .attr("stroke", "black")
             .on("click", function(d,i) {
 
                 // Remove the playerlist
@@ -1368,7 +1437,7 @@ function make_the_bars(world_cup_continent, club_continent)
                   show_list_right(which_players_in_country(selection_club_countries[i], wc_selection, club_selection)[0])
                 }; 
             })
-
+            .attr("transform", "translate(" + 0 +"," + 25 + ")")
 
         // Set the values along the bars
         var values_by_bars_right = svg.selectAll("text_by_bars")
@@ -1377,12 +1446,13 @@ function make_the_bars(world_cup_continent, club_continent)
             .append("svg:text")
             .attr("class", "bar_right")
             .attr("x", function(d) { return 1 /2 * width + 1 + widthScale(d); })
-            .attr("y", function(d,i) {return i * 920 / selection_club_countries.length / 1.025; })
-            .attr("dx", 20/2)
-            .attr("dy", 920 / selection_club_countries.length / 1.361 / 2 + 6)
+            .attr("y", function(d,i) {return i * height / selection_club_countries.length / divided_for_loc_bar; })
+            .attr("dx", text_place_cor/2)
+            .attr("dy", height / selection_club_countries.length / divided_for_height_bar / 2 + ab_and_val_place_cor)
             .attr("text-anchor", "middle")
             .text(function(d) { return d;})
             .attr("fill", "black")
+            .attr("transform", "translate(" + 0 +"," + 25 + ")")
 
 
 
@@ -1394,10 +1464,13 @@ function make_the_bars(world_cup_continent, club_continent)
             .append("rect")
             .attr("class", "bar_right")
             .attr("width", function(d) { return little_bar_or_not(d); })
-            .attr("height", 920 / selection_club_countries.length / 1.361)
-            .attr("y", function(d,i) {return i * 920 / selection_club_countries.length / 1.025; })
-            .attr("x", 1 /2 * width + 1)
+            .attr("height", height / selection_club_countries.length / divided_for_height_bar)
+            .attr("y", function(d,i) {return i * height / selection_club_countries.length / divided_for_loc_bar; })
+            .attr("x", 1 /2 * width - width_little_bar)
             .attr("fill", function(d,i) {return calculate_colors(selection_club_countries[i])[1]; })
+            .attr("stroke-width", 1)
+            .attr("stroke", "black")
+            .attr("transform", "translate(" + 0 +"," + 25 + ")")
 
         function make_lines_from_right(wc_selection, club_selection, input)
         {
@@ -1410,12 +1483,13 @@ function make_the_bars(world_cup_continent, club_continent)
                 var line = svg
                     .append("line")
                     .attr("class", "lines")       
-                    .attr("x1", widthScale(23) + 550 +35)
-                    .attr("y1", i * 920 / selection_wc_countries.length / 1.025 + 1 / 2 * 920 / selection_wc_countries.length / 1.361)
-                    .attr("x2",  1 /2 * width + 1 - 35)
-                    .attr("y2", input * 920 / selection_club_countries.length / 1.025 + 1 / 2 * 920 / selection_club_countries.length / 1.361)
+                    .attr("x1", widthScale(wc_team_amount) + shift_left_bars + line_place_cor)
+                    .attr("y1", i * height / selection_wc_countries.length / divided_for_loc_bar + 1 / 2 * height / selection_wc_countries.length / divided_for_height_bar)
+                    .attr("x2",  1 /2 * width - line_place_cor)
+                    .attr("y2", input * height / selection_club_countries.length / divided_for_loc_bar + 1 / 2 * height / selection_club_countries.length / divided_for_height_bar)
                     .attr("stroke", "green")
                     .attr("stroke-width", 1)
+                    .attr("transform", "translate(" + 0 +"," + 25 + ")")
                 }
             }
         }
