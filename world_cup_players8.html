@@ -25,7 +25,7 @@ rect{
     shape-rendering:crispEdges;
 }
 
-#csv, #csv2 {
+#csv {
     display: none;
 }
 
@@ -1370,6 +1370,31 @@ function make_the_bars(world_cup_continent, club_continent)
             })
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Make the bars of the data_plot that's generated
+        var bars2_right = svg.selectAll("rect2")
+            .data(calculate_values_of_countries(wc_selection, club_selection)[0])
+            .enter()
+            .append("rect")
+            .attr("class", "bar_right")
+            .attr("width", function(d) { return little_bar_or_not(d); })
+            .attr("height", 920 / selection_club_countries.length / 1.361)
+            .attr("y", function(d,i) {return i * 920 / selection_club_countries.length / 1.025; })
+            .attr("x", 1 /2 * width + 1)
+            .attr("fill", function(d,i) {return calculate_colors(selection_club_countries[i])[1]; })
+
         // Set the values along the bars
         var values_by_bars_right = svg.selectAll("text_by_bars")
             .data(calculate_values_of_countries(wc_selection, club_selection)[0])
@@ -1387,17 +1412,6 @@ function make_the_bars(world_cup_continent, club_continent)
 
 
 
-        // Make the bars of the data_plot that's generated
-        var bars2_right = svg.selectAll("rect2")
-            .data(calculate_values_of_countries(wc_selection, club_selection)[0])
-            .enter()
-            .append("rect")
-            .attr("class", "bar_right")
-            .attr("width", function(d) { return little_bar_or_not(d); })
-            .attr("height", 920 / selection_club_countries.length / 1.361)
-            .attr("y", function(d,i) {return i * 920 / selection_club_countries.length / 1.025; })
-            .attr("x", 1 /2 * width + 1)
-            .attr("fill", function(d,i) {return calculate_colors(selection_club_countries[i])[1]; })
 
         function make_lines_from_right(wc_selection, club_selection, input)
         {

@@ -25,17 +25,12 @@ rect{
     shape-rendering:crispEdges;
 }
 
-#csv, #csv2 {
+#csv {
     display: none;
 }
 
 #mainbar_left:hover, #mainbar_right:hover {
   fill: black;
-}
-
-
-#mainbar_left:active, #mainbar_right:active { 
-  fill: yellow;
 }
 
 .form_right {
@@ -1111,6 +1106,7 @@ function little_bar_or_not(d)
 
 function show_list_right(input)
 {
+    d3.selectAll(".playerlist").remove()
 
     var player_list = svg.selectAll("playerlist")
     .data(input)
@@ -1148,9 +1144,6 @@ function make_the_bars(world_cup_continent, club_continent)
 {
     svg.selectAll("*").remove()
 
-    var clicked_array
-    var clicked_array_2
-
     var selection_club_countries = make_selection_of_club_countries(club_continent)
     var selection_wc_countries = make_selection_of_world_cup_countries(world_cup_continent)
 
@@ -1182,10 +1175,11 @@ function make_the_bars(world_cup_continent, club_continent)
         .text(function(d) { return calculate_abbreviation(d);})
         .attr("fill", "black")
 
+
     // Set all the clickvalues back to null and update the value that's clicked
     function change_zero_one(array, index)
     {
-
+        console.log("hello")
         for (var i = 0; i < array.length; i ++)       
             if (i != index || array[i] == 1)
             {
@@ -1204,11 +1198,11 @@ function make_the_bars(world_cup_continent, club_continent)
         var data_input = calculate_values_of_countries(wc_selection, club_selection)[1]
 
         // Define a variable to remember if there is clicked on a specific world cup team bar 
-        clicked_array = Array.apply(null, new Array(data_input.length)).map(Number.prototype.valueOf,0);
-
+        var clicked_array = Array.apply(null, new Array(data_input.length)).map(Number.prototype.valueOf,0);
+        console.log(clicked_array)
 
         var bars1_left = svg.selectAll("rect3")
-            .data(calculate_values_of_countries(wc_selection, club_selection)[1])
+            .data(data_input)
             .enter()
             .append("rect")
             .attr("class", "bar_left")
@@ -1218,41 +1212,28 @@ function make_the_bars(world_cup_continent, club_continent)
             .attr("y", function(d,i) {return i * 920 / selection_wc_countries.length / 1.025; })
             .attr("x", function(d) { return 0 + widthScale(23 - d); })
             .attr("fill", function(d,i) {return calculate_colors(selection_wc_countries[i])[0]; })
-            .on("click", function(d,i) { 
+            .attr("transform", "translate(" + 350 + "," + 0 + ")")
+            .on("click", function(d,i) { d3.selectAll(".bar_right").remove(),
 
-                // Remove the playerlist
-                d3.selectAll(".playerlist").remove()
+                // Set all the clickvalues back to null and update the value that's clicked
+                clicked_array = change_zero_one(clicked_array, i)
 
-                console.log(clicked_array_2.indexOf(1))
-                // Check if there is clicked on a bar on the right side
-                if (clicked_array_2.indexOf(1) < 0)
+                // If a bar of a world cup team is clicked for the first time, show the specific details
+                if (clicked_array[i] == 1)
                 {
-                  // Set all the clickvalues back to null and update the value that's clicked
-                  clicked_array = change_zero_one(clicked_array, i)
-
-                  // Remove the left bar, because that one will be updated and remove the playerlist and lines
-                  d3.selectAll(".bar_right").remove(),
-                  d3.selectAll(".lines").remove()
-
-                  // If a bar of a world cup team is clicked for the first time, show the specific details and updated the bars
-                  if (clicked_array[i] == 1)
-                  {
-                    make_the_right_bars(selection_wc_countries[i], club_selection),
-                    show_list_right(which_players_in_country(selection_wc_countries[i], wc_selection, club_selection)[1]),
-                    make_lines_from_left(selection_wc_countries[i], club_selection, i)
-
-                  }
-                  // If a bar of a world cup team is clicked for the second time in a row, hide the specific details and show the main bars on the right
-                  if (clicked_array[i] == 0)
-                  {
-                      make_the_right_bars(wc_selection, club_selection)       
-                  };
+                make_the_right_bars(selection_wc_countries[i], club_selection),
+                show_list_right(which_players_in_country(selection_wc_countries[i], wc_selection, club_selection)[1]),
+                make_lines_from_left(selection_wc_countries[i], club_selection, i)
                 }
-                // If there is clicked on a bar on the right, only update the list
-                else
+                // If a bar of a world cup team is clicked for the second time in a row, hide the specific details and show the main bars on the right
+                if (clicked_array[i] == 0)
                 {
-                  show_list_left(which_players_in_country(selection_wc_countries[i], wc_selection, club_selection)[1])
-                }
+                    d3.selectAll(".bar_right").remove(),
+                    d3.selectAll(".playerlist").remove(),
+                    d3.selectAll(".lines").remove(),
+
+                    make_the_right_bars(wc_selection, club_selection)       
+                }; 
             })
             .attr("transform", "translate(" + 550 +"," + 0 + ")")
 
@@ -1287,7 +1268,11 @@ function make_the_bars(world_cup_continent, club_continent)
 
         function make_lines_from_left(wc_selection, club_selection, input)
         {
+            d3.selectAll(".lines").remove()
+
             var values = calculate_values_of_countries(wc_selection, club_selection)[0]
+
+
 
             for (var i = 0; i < values.length; i ++)
             {
@@ -1319,8 +1304,9 @@ function make_the_bars(world_cup_continent, club_continent)
     {
         var data_input = calculate_values_of_countries(wc_selection, club_selection)[0]
 
-        // Define a variable to remember if there is clicked on a specific world cup team bar 
-        clicked_array_2 = Array.apply(null, new Array(data_input.length)).map(Number.prototype.valueOf,0);
+        // Define a variable to remember if there is clicked on a specific club country bar 
+        var clicked_array = Array.apply(null, new Array(data_input.length)).map(Number.prototype.valueOf,0);
+        console.log(clicked_array)
 
         var bars1_right = svg.selectAll("rect1")
             .data(data_input)
@@ -1333,42 +1319,42 @@ function make_the_bars(world_cup_continent, club_continent)
             .attr("y", function(d,i) {return i * 920 / selection_club_countries.length / 1.025; })
             .attr("x", 1 /2 * width + 1)
             .attr("fill", function(d,i) {return calculate_colors(selection_club_countries[i])[0]; })
-            .on("click", function(d,i) {
+            .on("click", function(d) { d3.selectAll(".bar_left").remove(),
 
-                // Remove the playerlist
-                d3.selectAll(".playerlist").remove()
+                // Set all the clickvalues back to null and update the value that's clicked
+                clicked_array = change_zero_one(clicked_array, i)
 
-                // Check if there is clicked on a bar on the right side
-                if (clicked_array.indexOf(1) < 0)
+                // If a bar of a world cup team is clicked for the first time, show the specific details
+                if (clicked_array[i] == 1)
                 {
-                  // Set all the clickvalues back to null and update the value that's clicked
-                  clicked_array_2 = change_zero_one(clicked_array_2, i)
-
-                  // Remove the left bar, because that one will be updated and remove the playerlist and lines
-                  d3.selectAll(".bar_left").remove(),
-                  d3.selectAll(".lines").remove()
-
-                  // If a bar of a world cup team is clicked for the first time, show the specific details and updated the bars
-                  if (clicked_array_2[i] == 1)
-                  {
-                    make_the_left_bars(wc_selection, selection_club_countries[i]),
-                    show_list_left(which_players_in_country(selection_club_countries[i], wc_selection, club_selection)[0]),
-                    make_lines_from_right(wc_selection, selection_club_countries[i], i)
-
-                  }
-                  // If a bar of a world cup team is clicked for the second time in a row, hide the specific details and show the main bars on the right
-                  if (clicked_array_2[i] == 0)
-                  {
-                    make_the_left_bars(wc_selection, club_selection)       
-                  };
+                make_the_left_bars(wc_selection, selection_club_countries[i]),
+                show_list_left(which_players_in_country(selection_club_countries[i], wc_selection, club_selection)[0]),
+                make_lines_from_right(wc_selection, selection_club_countries[i], i)
                 }
-                // If there is clicked on a bar on the right, only update the list
-                else
+                // If a bar of a world cup team is clicked for the second time in a row, hide the specific details and show the main bars on the right
+                if (clicked_array[i] == 0)
                 {
-                  show_list_right(which_players_in_country(selection_club_countries[i], wc_selection, club_selection)[0])
+                    d3.selectAll(".bar_left").remove(),
+                    d3.selectAll(".playerlist").remove(),
+                    d3.selectAll(".lines").remove(),
+
+                    make_the_left_bars(wc_selection, club_selection)       
                 }; 
             })
 
+
+
+        // Make the bars of the data_plot that's generated
+        var bars2_right = svg.selectAll("rect2")
+            .data(calculate_values_of_countries(wc_selection, club_selection)[0])
+            .enter()
+            .append("rect")
+            .attr("class", "bar_right")
+            .attr("width", function(d) { return little_bar_or_not(d); })
+            .attr("height", 920 / selection_club_countries.length / 1.361)
+            .attr("y", function(d,i) {return i * 920 / selection_club_countries.length / 1.025; })
+            .attr("x", 1 /2 * width + 1)
+            .attr("fill", function(d,i) {return calculate_colors(selection_club_countries[i])[1]; })
 
         // Set the values along the bars
         var values_by_bars_right = svg.selectAll("text_by_bars")
@@ -1387,17 +1373,6 @@ function make_the_bars(world_cup_continent, club_continent)
 
 
 
-        // Make the bars of the data_plot that's generated
-        var bars2_right = svg.selectAll("rect2")
-            .data(calculate_values_of_countries(wc_selection, club_selection)[0])
-            .enter()
-            .append("rect")
-            .attr("class", "bar_right")
-            .attr("width", function(d) { return little_bar_or_not(d); })
-            .attr("height", 920 / selection_club_countries.length / 1.361)
-            .attr("y", function(d,i) {return i * 920 / selection_club_countries.length / 1.025; })
-            .attr("x", 1 /2 * width + 1)
-            .attr("fill", function(d,i) {return calculate_colors(selection_club_countries[i])[1]; })
 
         function make_lines_from_right(wc_selection, club_selection, input)
         {
