@@ -1,0 +1,66 @@
+
+body{
+
+    width: 1200px;
+    margin: 100px auto;
+    background-color: #9FD6E8;
+
+}
+
+.description {
+  position: absolute;
+  top: 1000px;
+  left: 80px;
+}
+svg text{
+    font-size:12px;
+}
+
+
+svg {
+    background-color: #E7F4FA;
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    border: 1px solid;
+    border-radius: 25px;
+    border-color: green;
+}
+
+rect{
+    shape-rendering:crispEdges;
+}
+
+#csv, #csv2 {
+    display: none;
+}
+
+#mainbar_left:hover, #mainbar_right:hover {
+  fill: black;
+}
+
+
+#mainbar_left:active, #mainbar_right:active { 
+  fill: yellow;
+}
+
+.form_right {
+  position: absolute;
+  left: 1150px;
+  top: 10px;
+  width: 700px;
+  height: 10px;
+}
+
+.form_left {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 700px;
+  height: 10px;
+}
+
+
+.playerlist:hover {
+  fill: red;
+}
