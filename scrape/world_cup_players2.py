@@ -330,6 +330,7 @@ def scrape_players_info(link):
     country_of_club = []
     country_of_club_2 = []
     club_and_country = []
+    link_to_image = []
 
 
 
@@ -385,9 +386,16 @@ def scrape_players_info(link):
                 club_2.append(club)
                 country_of_club = club_and_country[1].replace(")", "")
                 country_of_club_2.append(country_of_club)
+    # First <div> element in entry with class="picture-wrap"                
+    for link_to_image_1 in dom('div[class="picture-wrap"]'):
+        # First <img> element in entry with class="player" 
+        for link_to_image_2 in link_to_image_1('img[class="player"]'):
+
+            link = link_to_image_2.attrs.get("src","")
+            link_to_image.append(link)
 
     players_info = []
-    players_info = list(zip(land, land_afkorting, name, role, caps, goals, length, first_one, birthday, club_2, country_of_club_2))
+    players_info = list(zip(land, land_afkorting, name, role, caps, goals, length, first_one, birthday, club_2, country_of_club_2, link_to_image))
     # Return players information
     return players_info
 
