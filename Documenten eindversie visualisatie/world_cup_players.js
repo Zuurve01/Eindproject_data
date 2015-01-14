@@ -1,5 +1,5 @@
 d3.text("colors_complete.csv", function(error, colors) {
-    d3.text("players_complete2.csv", function(error, data) {
+    d3.text("players_complete3.csv", function(error, data) {
 
         // Function to check  if the array contains some element
         Array.prototype.contains = function(v) {
@@ -488,8 +488,6 @@ d3.text("colors_complete.csv", function(error, colors) {
                 }
             }
 
-            console.log(country_abbreviation_png)
-
             var player_list = svg.selectAll("playerlist")
             .data(input)
             .enter()
@@ -532,16 +530,14 @@ d3.text("colors_complete.csv", function(error, colors) {
                         // World cup country abbreviaiton
                         link_to_image = String(all_lines[i][12] + ".png")
                         country_abbreviation_png[j] = link_to_image.concat(", " + input[j])
-                        console.log(country_abbreviation_png[j])
                     }
                 }
             }
 
-            country_abbreviation_png = country_abbreviation_png.sort(SortLowToHigh) 
-            console.log(country_abbreviation_png)          
+            country_abbreviation_png = country_abbreviation_png.sort(SortLowToHigh)         
 
             var player_list = svg.selectAll("playerlist")
-            .data(input)
+            .data(country_abbreviation_png)
             .enter()
             .append("svg:text")
             .attr("class", "playerlist")
@@ -550,8 +546,8 @@ d3.text("colors_complete.csv", function(error, colors) {
             .attr("dy", function(d,i) {return i * text_place_cor; })
             .attr("text-anchor", "right")
             .attr("fill", "black")
-            .text(function(d) { return d; })
-            .on("click", function(d) { return make_player_profile(d); });
+            .text(function(d) { return d.slice(9); })
+            .on("click", function(d) { return make_player_profile(d.slice(9)); });
 
             svg.selectAll("playerlist_images")
             .data(country_abbreviation_png)

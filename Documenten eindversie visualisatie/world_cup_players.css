@@ -10,8 +10,10 @@ body{
 .description {
   position: absolute;
   top: 1000px;
-  left: 80px;
+  left: 50px;
+  width: 1802px;
 }
+
 svg text{
     font-size:12px;
 }

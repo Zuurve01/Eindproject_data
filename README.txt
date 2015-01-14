@@ -1,0 +1,1 @@
+In deze respository zijn documenten opgenomen ten behoeve van een visualisatie waarbij de clubherkomst van de WK 2014 spelers inzichtelijk wordt gemaakt. 
