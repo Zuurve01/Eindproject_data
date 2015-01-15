@@ -117,15 +117,30 @@ d3.text("colors_complete.csv", function(error, colors) {
         var divided_for_loc_bar = 1.025
         // Define variables that's used to shift the leftbars and belongings
         var shift_left_bars = 550
+        // Define variables to shift the bars to bellow
+        var shift_bars_verticale = 25
         // Define a variable for the width of the second little bar
         var width_little_bar = 4
         // Define a variable for correction on line places
         var line_place_cor = 35
         // Defina a variable for correction of the vertical place of the abbreviation
         var ab_and_val_place_cor = 6
+        // Define variable for the vertical place of the titles in the svg
+        var shift_titles = 10
         // Define variable for the distance between title1 and the showed country name
         var shift_country_name = 160
-
+        // Define variable for the height of the little flags
+        var height_flag = 12
+        // Define variable for the width of the little flag
+        var width_flag = 30
+        // Define variable for the height of the profile-box
+        var height_profile_box = 180
+        // Define variable for the width of the profile-box
+        var width_profile_box = 370
+        // Make a variable for the height of the photo in the profile-box
+        var height_photo = 110
+        // Make a variable for the width of the photo in the profile-box
+        var width_photo = 90
 
         // Translate the pixels to the values and call it withScale
         var widthScale = d3.scale.linear()
@@ -181,33 +196,29 @@ d3.text("colors_complete.csv", function(error, colors) {
 
             // Make a title above the world cup team bars
             var title_1 = svg
-            .append("svg:text")
-            .attr("x", widthScale(wc_team_amount) / 2)
-            .attr("y", 10)
-            .attr("text-anchor", "middle")
-            .attr("fill", "black")
-            .style("font-size","18px")
-            .style("font-weight", "bold")
-            .text("World cup teams")
-            .attr("transform", "translate(" + shift_left_bars +"," + 0 + ")");
+                .append("svg:text")
+                .attr("x", widthScale(wc_team_amount) / 2)
+                .attr("y", shift_titles)
+                .attr("text-anchor", "middle")
+                .attr("fill", "black")
+                .style("font-size","18px")
+                .style("font-weight", "bold")
+                .text("World Cup teams")
+                .attr("transform", "translate(" + shift_left_bars +"," + 0 + ")");
 
             // Make a title above the National competition bars
             var title_2 = svg
-            .append("svg:text")
-            .attr("x",  1/2 * width + widthScale(wc_team_amount) / 2 + text_place_cor)
-            .attr("y", 10)
-            .attr("text-anchor", "middle")
-            .attr("fill", "black")
-            .style("font-size","18px")
-            .style("font-weight", "bold")
-            .text("National competitions");
+                .append("svg:text")
+                .attr("x",  1/2 * width + widthScale(wc_team_amount) / 2 + text_place_cor)
+                .attr("y", shift_titles)
+                .attr("text-anchor", "middle")
+                .attr("fill", "black")
+                .style("font-size","18px")
+                .style("font-weight", "bold")
+                .text("National competitions");
 
-
-
-
-
-
-                var abbreviation_by_bars_left = svg.selectAll("abbreviation_by_bars2")
+            // Set abbreviations next to the bars
+            var abbreviation_by_bars_left = svg.selectAll("abbreviation_by_bars2")
                 .data(selection_wc_countries)
                 .enter()
                 .append("svg:text")
@@ -218,9 +229,9 @@ d3.text("colors_complete.csv", function(error, colors) {
                 .attr("text-anchor", "middle")
                 .text(function(d) { return calculate_abbreviation(d);})
                 .attr("fill", "black")
-                .attr("transform", "translate(" + shift_left_bars +"," + 25 + ")")
+                .attr("transform", "translate(" + shift_left_bars +"," + shift_bars_verticale + ")")
 
-                var abbreviation_by_bars_right = svg.selectAll("abbreviation_by_bars")
+            var abbreviation_by_bars_right = svg.selectAll("abbreviation_by_bars")
                 .data(selection_club_countries)
                 .enter()
                 .append("svg:text")
@@ -231,7 +242,7 @@ d3.text("colors_complete.csv", function(error, colors) {
                 .attr("text-anchor", "middle")
                 .text(function(d) { return calculate_abbreviation(d);})
                 .attr("fill", "black")
-                .attr("transform", "translate(" + 0 +"," + 25 + ")")
+                .attr("transform", "translate(" + 0 +"," + shift_bars_verticale + ")")
         }
 
 
@@ -242,7 +253,7 @@ d3.text("colors_complete.csv", function(error, colors) {
             // Define a variable to remember if there is clicked on a specific world cup team bar 
             clicked_array = Array.apply(null, new Array(data_input.length)).map(Number.prototype.valueOf,0);
 
-
+            // Make the left bars
             var bars1_left = svg.selectAll("rect3")
                 .data(calculate_values_of_countries(wc_selection, club_selection)[1])
                 .enter()
@@ -262,7 +273,6 @@ d3.text("colors_complete.csv", function(error, colors) {
                     d3.selectAll(".playerlist").remove()
                     d3.selectAll(".player_profile").remove()
 
-                    // console.log(clicked_array_2.indexOf(1))
                     // Check if there is clicked on a bar on the right side
                     if (clicked_array_2.indexOf(1) < 0)
                     {
@@ -295,7 +305,7 @@ d3.text("colors_complete.csv", function(error, colors) {
                 })
                 .on("mouseover", function(d, i){ return show_full_country_name(selection_wc_countries[i]); })
                 .on("mouseout", function(d, i){ return d3.selectAll(".full_name").remove(); })
-                .attr("transform", "translate(" + shift_left_bars +"," + 25 + ")")
+                .attr("transform", "translate(" + shift_left_bars +"," + shift_bars_verticale + ")")
 
 
             // Set the values along the bars
@@ -311,7 +321,7 @@ d3.text("colors_complete.csv", function(error, colors) {
                 .attr("text-anchor", "middle")
                 .text(function(d) { return d;})
                 .attr("fill", "black")
-                .attr("transform", "translate(" + shift_left_bars +"," + 25 + ")")
+                .attr("transform", "translate(" + shift_left_bars +"," + shift_bars_verticale + ")")
 
                 // Make the bars of the data_plot that's generated
                 var bars2_left = svg.selectAll("rect4")
@@ -326,7 +336,7 @@ d3.text("colors_complete.csv", function(error, colors) {
                 .attr("fill", function(d,i) {return  calculate_colors(selection_wc_countries[i])[1]; })
                 .attr("stroke-width", 1)
                 .attr("stroke", "black")
-                .attr("transform", "translate(" + shift_left_bars +"," + 25 + ")")
+                .attr("transform", "translate(" + shift_left_bars +"," + shift_bars_verticale + ")")
         }
 
 
@@ -337,6 +347,7 @@ d3.text("colors_complete.csv", function(error, colors) {
             // Define a variable to remember if there is clicked on a specific world cup team bar 
             clicked_array_2 = Array.apply(null, new Array(data_input.length)).map(Number.prototype.valueOf,0);
 
+            // Make the right bars
             var bars1_right = svg.selectAll("rect1")
                 .data(data_input)
                 .enter()
@@ -388,7 +399,7 @@ d3.text("colors_complete.csv", function(error, colors) {
                 })
                 .on("mouseover", function(d, i){ return show_full_country_name(selection_club_countries[i]); })
                 .on("mouseout", function(d, i){ return d3.selectAll(".full_name").remove(); })
-                .attr("transform", "translate(" + 0 +"," + 25 + ")")
+                .attr("transform", "translate(" + 0 +"," + shift_bars_verticale + ")")
 
             // Set the values along the bars
             var values_by_bars_right = svg.selectAll("text_by_bars")
@@ -403,7 +414,7 @@ d3.text("colors_complete.csv", function(error, colors) {
                 .attr("text-anchor", "middle")
                 .text(function(d) { return d;})
                 .attr("fill", "black")
-                .attr("transform", "translate(" + 0 +"," + 25 + ")")
+                .attr("transform", "translate(" + 0 +"," + shift_bars_verticale + ")")
 
 
 
@@ -421,7 +432,7 @@ d3.text("colors_complete.csv", function(error, colors) {
                 .attr("fill", function(d,i) {return calculate_colors(selection_club_countries[i])[1]; })
                 .attr("stroke-width", 1)
                 .attr("stroke", "black")
-                .attr("transform", "translate(" + 0 +"," + 25 + ")")
+                .attr("transform", "translate(" + 0 +"," + shift_bars_verticale + ")")
         }
 
 
@@ -442,7 +453,7 @@ d3.text("colors_complete.csv", function(error, colors) {
                     .attr("y2", i * height / selection_club_countries.length / divided_for_loc_bar + + 1 / 2 * height / selection_club_countries.length / divided_for_height_bar)
                     .attr("stroke", "green")
                     .attr("stroke-width", 1)
-                    .attr("transform", "translate(" + 0 +"," + 25 + ")")
+                    .attr("transform", "translate(" + 0 +"," + shift_bars_verticale + ")")
                 }
             }
         }
@@ -465,7 +476,7 @@ d3.text("colors_complete.csv", function(error, colors) {
                     .attr("y2", input * height / selection_club_countries.length / divided_for_loc_bar + 1 / 2 * height / selection_club_countries.length / divided_for_height_bar)
                     .attr("stroke", "green")
                     .attr("stroke-width", 1)
-                    .attr("transform", "translate(" + 0 +"," + 25 + ")")
+                    .attr("transform", "translate(" + 0 +"," + shift_bars_verticale + ")")
                 }
             }
         }
@@ -482,37 +493,41 @@ d3.text("colors_complete.csv", function(error, colors) {
                 {
                     if (all_lines[i][3] == input[j])
                     {
-                        // World cup country abbreviaiton
-                        country_abbreviation_png.push([all_lines[i][1] + ".png"])
+                        link_to_image = String(all_lines[i][1] + ".png")
+                        country_abbreviation_png[j] = link_to_image.concat(", " + input[j])
                     }
                 }
             }
 
-            var player_list = svg.selectAll("playerlist")
-            .data(input)
-            .enter()
-            .append("svg:text")
-            .attr("class", "playerlist")
-            .attr("x", function(d,i) { return parseInt(i / max_player_names) * distance_x_player_names + 30;})
-            .attr("y", margin.top)
-            .attr("dy", function(d,i) {
-                    return (i - max_player_names * parseInt(i / max_player_names)) * text_place_cor; })
-            .attr("text-anchor", "right")
-            .attr("fill", "black")
-            .text(function(d) { return d; })
-            .on("click", function(d) { return make_player_profile(d); });
+            console.log(country_abbreviation_png)
+            // Set the countries on alphabetic order to show the list in the same order as the bars
+            country_abbreviation_png = country_abbreviation_png.sort(SortLowToHigh)
 
-            svg.selectAll("playerlist_images")
-            .data(input)
-            .enter()
-            .append("image")
-            .attr("xlink:href", function(d, i) { return String(country_abbreviation_png[i]); })
-            .attr("class", "playerlist")
-            .attr("x", function(d,i) { return parseInt(i / max_player_names) * distance_x_player_names;})
-            .attr("y", function(d,i) {
-                    return (i - max_player_names * parseInt(i / max_player_names)) * text_place_cor; })
-            .attr("width", 30)
-            .attr("height", 12);
+            var player_list = svg.selectAll("playerlist")
+                .data(country_abbreviation_png)
+                .enter()
+                .append("svg:text")
+                .attr("class", "playerlist")
+                .attr("x", function(d,i) { return parseInt(i / max_player_names) * distance_x_player_names + width_flag;})
+                .attr("y", margin.top)
+                .attr("dy", function(d,i) {
+                        return (i - max_player_names * parseInt(i / max_player_names)) * text_place_cor; })
+                .attr("text-anchor", "right")
+                .attr("fill", "black")
+                .text(function(d) { return d.slice(9); })
+                .on("click", function(d) { return make_player_profile(d.slice(9)); });
+
+            var player_image = svg.selectAll("playerlist_images")
+                .data(country_abbreviation_png)
+                .enter()
+                .append("image")
+                .attr("xlink:href", function(d, i) { return d.slice(0, 7); })
+                .attr("class", "playerlist")
+                .attr("x", function(d,i) { return parseInt(i / max_player_names) * distance_x_player_names;})
+                .attr("y", function(d,i) {
+                        return (i - max_player_names * parseInt(i / max_player_names)) * text_place_cor; })
+                .attr("width", width_flag)
+                .attr("height", height_flag);
         }
 
 
@@ -527,13 +542,13 @@ d3.text("colors_complete.csv", function(error, colors) {
                 {
                     if (all_lines[i][3] == input[j])
                     {
-                        // World cup country abbreviaiton
                         link_to_image = String(all_lines[i][12] + ".png")
                         country_abbreviation_png[j] = link_to_image.concat(", " + input[j])
                     }
                 }
             }
 
+            // Set the countries on alphabetic order to show the list in the same order as the bars
             country_abbreviation_png = country_abbreviation_png.sort(SortLowToHigh)         
 
             var player_list = svg.selectAll("playerlist")
@@ -549,17 +564,17 @@ d3.text("colors_complete.csv", function(error, colors) {
             .text(function(d) { return d.slice(9); })
             .on("click", function(d) { return make_player_profile(d.slice(9)); });
 
-            svg.selectAll("playerlist_images")
+            var player_image = svg.selectAll("playerlist_images")
             .data(country_abbreviation_png)
             .enter()
             .append("image")
             .attr("xlink:href", function(d, i) { return d.slice(0, 7); })
             .attr("class", "playerlist")
-            .attr("x", width - distance_x_player_names - 30)
+            .attr("x", width - distance_x_player_names - width_flag)
             .attr("y", function(d,i) {
                     return (i - max_player_names * parseInt(i / max_player_names)) * text_place_cor; })
-            .attr("width", 30)
-            .attr("height", 12);
+            .attr("width", width_flag)
+            .attr("height", height_flag);
 
         }
 
@@ -568,7 +583,7 @@ d3.text("colors_complete.csv", function(error, colors) {
             var full_name_left = svg
             .append("svg:text")
             .attr("x",  widthScale(wc_team_amount) / 2 + shift_country_name)
-            .attr("y", 10)
+            .attr("y", shift_titles)
             .attr("text-anchor", "middle")
             .attr("fill", "black")
             .attr("class", "full_name")
@@ -614,10 +629,10 @@ d3.text("colors_complete.csv", function(error, colors) {
             svg
             .append("rect")
             .attr("class", "player_profile")
-            .attr("width", 370)
-            .attr("height", 180)
+            .attr("width", width_profile_box)
+            .attr("height", height_profile_box)
             .attr("y", 1 / 11 * height - text_place_cor + ab_and_val_place_cor)
-            .attr("x", 2/ 3 * width - 30)
+            .attr("x", 65/ 100 * width)
             
             .attr("fill", "#9FD6E8")
             .attr("stroke-width", 1)
@@ -631,7 +646,7 @@ d3.text("colors_complete.csv", function(error, colors) {
             .attr("font-size", "20px")
             .attr("text-anchor", "right")
             .attr("y", 1 / 11 * height)
-            .attr("x", 2 / 3 * width + ab_and_val_place_cor - 30)
+            .attr("x", 65 / 100 * width + ab_and_val_place_cor)
             .attr("dy", function(d,i) { return 20 * i; })
             .style("fill", "black")
             .text(function(d,i) { return player_profile[i].join(""); });
@@ -639,10 +654,10 @@ d3.text("colors_complete.csv", function(error, colors) {
             svg.append("image")
             .attr("xlink:href", String(link_to_image[0]))
             .attr("class", "player_profile")
-            .attr("x", 2/ 3 * width + 3 / 4 * 370 - 30)
+            .attr("x", 65 / 100 * width + 3 / 4 * width_profile_box)
             .attr("y", 1 / 11 * height - ab_and_val_place_cor)
-            .attr("width", 90)
-            .attr("height", 110);
+            .attr("width", width_photo)
+            .attr("height", height_photo);
         }
 
 
